@@ -4,6 +4,7 @@ import  RoomMemberModel  from "../model/roomMember";
 import  MessageModel  from "../model/message";
 import crypto from "crypto";
 
+
 export const createRoom = async (req: Request, res: Response) => {
   try {
     const { name, isPrivate } = req.body;
@@ -12,12 +13,15 @@ export const createRoom = async (req: Request, res: Response) => {
 
     const room = await RoomModel.create({ name, isPrivate, inviteCode });
 
-    res.status(201).json({
+   return res.status(201).json({
       roomId: room.id,
-      inviteLink: `https://yourapp.com/invite/${inviteCode}`,
+      inviteLink: `https://chat-app-rgvv.onrender.com/invite/${inviteCode}`,
     });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create room" });
+  } catch (error: any) {
+   return res.status(400).json({
+			status: 'error',
+			message: error.message || 'Room creation failed'
+		});
   }
 };
 
@@ -38,11 +42,15 @@ export const joinRoom = async (req: Request, res: Response) => {
     }
 
     const newMember = await RoomMemberModel.create({ userId, roomId });
-    res.json({ message: "Joined room successfully", newMember });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to join room" });
+    return res.json({ message: "Joined room successfully", newMember });
+  } catch (error: any) {
+    return res.status(400).json({
+			status: 'error',
+			message: error.message || 'Room joining failed'
+		});
   }
 };
+
 
 export const joinRoomByInvite = async (req: Request, res: Response) => {
   try {
@@ -61,8 +69,11 @@ export const joinRoomByInvite = async (req: Request, res: Response) => {
 
     const newMember = await RoomMemberModel.create({ userId, roomId: room.id });
     res.json({ message: "Joined via invite link", room, newMember });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to join room via invite link" });
+  } catch (error: any) {
+   return res.status(400).json({
+			status: 'error',
+			message: error.message || 'Room joining failed'
+		});
   }
 };
 
@@ -74,9 +85,12 @@ export const getRoomMessages = async (req: Request, res: Response) => {
       where: { roomId },
       order: [["createdAt", "ASC"]],
     });
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch messages" });
+   return res.json(messages);
+  } catch (error: any) {
+   return res.status(400).json({
+			status: 'error',
+			message: error.message || 'Room fetching failed'
+		});
   }
 };
 
@@ -88,7 +102,10 @@ export const getUserRooms = async (req: Request, res: Response) => {
       include: [RoomModel],
     });
     res.json(rooms);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch user rooms" });
-  }
+  } catch (error: any) {
+  return res.status(400).json({ 
+    status: 'error',
+    message: error.message
+  });
+}
 };
