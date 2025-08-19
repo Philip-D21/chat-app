@@ -4,8 +4,8 @@ export interface DatabaseConfig {
 	password: string
 	database: string
 	host: string
+	port: number
 	dialect: string
-	port: string
 }
 
 export interface ConfigTypes {
