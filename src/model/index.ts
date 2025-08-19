@@ -5,15 +5,15 @@ import  config  from '../config/index'
 
 dotenv.config()
 
-const dbConfig = config
+// const dbConfig = config
 
 const sequelize = new Sequelize(
-    dbConfig.database,
-    dbConfig.username,
-    dbConfig.password,
+    config.database,
+    config.username,
+    config.password,
     {
         dialect: 'mysql',
-        host: dbConfig.host,
+        host: config.host,
         dialectOptions: {
             connectTimeout: 60000,
         },
