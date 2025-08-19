@@ -15,10 +15,11 @@ export interface ConfigTypes {
 
 
 export class UserI {
-    id!: number;
+    id!: string | null;
     email!: string;
     firstname!: string;
     lastname!: string;
     password!: string;
     username!: string;
+	lastSeen!: Date | null;
 }

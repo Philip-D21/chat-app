@@ -24,10 +24,10 @@ const sequelize = new Sequelize(
 sequelize
     .authenticate()
     .then(() => {
-        console.log('Connection successful')
+        console.log('Database Connected successfully 🚀')
     })
     .catch((err: Error) => {
-        console.log('Unable to sync successfully:', err)
+        console.log('Unable to connect successfully:', err)
     })
 
 export default sequelize
