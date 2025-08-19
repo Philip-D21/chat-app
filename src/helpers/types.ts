@@ -1,0 +1,24 @@
+
+export interface DatabaseConfig {
+	username: string
+	password: string
+	database: string
+	host: string
+	dialect: string
+	port: string
+}
+
+export interface ConfigTypes {
+	development: DatabaseConfig
+	production: DatabaseConfig
+}
+
+
+export class UserI {
+    id!: number;
+    email!: string;
+    firstname!: string;
+    lastname!: string;
+    password!: string;
+    username!: string;
+}

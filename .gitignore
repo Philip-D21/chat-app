@@ -1,0 +1,6 @@
+.env
+dist
+config
+*-lock.json
+*.lock
+node_modules
