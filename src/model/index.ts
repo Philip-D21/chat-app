@@ -1,11 +1,18 @@
 import { Sequelize } from 'sequelize'
 import * as dotenv from 'dotenv'
-import  config  from '../config/index'
-
+import { DatabaseConfig } from '../helpers/types';
 
 dotenv.config()
 
-// const dbConfig = config
+const config: DatabaseConfig = {
+    port: Number(process.env.DB_PORT) || 3306,
+    username: process.env.DB_USERNAME || '',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || '',
+    host: process.env.DB_HOST || '',
+    dialect: 'mysql',
+}
+
 
 const sequelize = new Sequelize(
     config.database,
