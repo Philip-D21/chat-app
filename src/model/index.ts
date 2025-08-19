@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize'
 import * as dotenv from 'dotenv'
-import { config } from '../config/index'
+import config  from '../config/index'
 
 
 dotenv.config()
