@@ -42,7 +42,7 @@ app.use('/api/v1/auth', authRouter);
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
-    res.send('Hello world')
+    res.send('Hello world! Stay cheesed up 👌')
 })
 
 
