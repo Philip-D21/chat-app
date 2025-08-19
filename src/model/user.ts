@@ -1,7 +1,7 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import { v4 as uuidv4 } from "uuid"
 import { UserI } from "../helpers/types"
-import sequelize from "./index";
+import{ sequelize} from "./index";
 
 class UserModel extends Model<UserI> {
     id!: string | null;
@@ -14,7 +14,7 @@ class UserModel extends Model<UserI> {
 
 }
 
-
+export function initUserModel(sequelize: Sequelize){
 UserModel.init(
     {
         id: {
@@ -44,7 +44,8 @@ UserModel.init(
             type: DataTypes.STRING,
         },
         lastSeen: {
-            type: DataTypes.DATE
+            type: DataTypes.DATE, 
+            allowNull: true
         }
        
     },
@@ -55,6 +56,8 @@ UserModel.init(
         timestamps: true
     },
 )
+  return UserModel
+}
 
 
 export default UserModel;

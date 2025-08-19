@@ -10,6 +10,7 @@ dotenv.config();
 
 //import routes
 import authRouter from './routes/auth';
+import chatRouter from './routes/chat';
 
 const app = express();
 
@@ -18,7 +19,8 @@ import globalErrorHandler from './middleware/errorHandler'
 // import AppError from './utils/appError'
 
 // Calling the database and sync
-import './model/index'
+import './model/index';
+import './model/sync';
 
 
 //middlewares 
@@ -39,6 +41,7 @@ app.use(
 
 //definiing routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/chat', chatRouter);
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {

@@ -9,5 +9,5 @@ router.post("/invite/:inviteCode/join", joinRoomByInvite); // join a room by inv
 router.get("/rooms/:roomId/messages", getRoomMessages); // get chat history
 router.get("/rooms", getUserRooms); // list user rooms
 
-export default router;
 
+export default router;

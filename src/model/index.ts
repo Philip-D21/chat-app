@@ -1,6 +1,10 @@
 import { Sequelize } from 'sequelize'
 import * as dotenv from 'dotenv'
 import { DatabaseConfig } from '../helpers/types';
+import RoomMemberModel, { initRoomMemberModel } from './roomMember';
+import UserModel, { initUserModel } from './user';
+import MessageModel, { initMessageModel } from './message';
+import RoomModel, { initRoomModel } from './room';
 
 dotenv.config()
 
@@ -29,7 +33,7 @@ const sequelize = new Sequelize(
 
 
 sequelize
-    .authenticate()
+     .authenticate()
     .then(() => {
         console.log('Database Connected successfully 🚀')
     })
@@ -37,4 +41,29 @@ sequelize
         console.log('Unable to connect successfully:', err)
     })
 
-export default sequelize
+
+// Initialize models
+initUserModel(sequelize);
+initRoomModel(sequelize);
+initMessageModel(sequelize);
+initRoomMemberModel(sequelize);
+
+
+//asociations
+RoomMemberModel.belongsTo(UserModel, { foreignKey: 'userId' });
+RoomMemberModel.belongsTo(RoomModel, { foreignKey: 'roomId' });
+
+
+UserModel.hasMany(MessageModel, { foreignKey: 'senderId' });
+RoomModel.hasMany(MessageModel, { foreignKey: 'roomId' });
+MessageModel.belongsTo(UserModel, { foreignKey: 'senderId' });
+MessageModel.belongsTo(RoomModel, { foreignKey: 'roomId' });
+
+
+export {
+  sequelize,
+  UserModel,
+  RoomModel,
+  MessageModel,
+  RoomMemberModel,
+};

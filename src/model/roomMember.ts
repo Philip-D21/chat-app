@@ -1,5 +1,5 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "./index";
+import { DataTypes, Model, Sequelize } from "sequelize";
+import{ sequelize} from "./index";
 
 class RoomMemberModel extends Model{
    public id!: string | null;
@@ -8,7 +8,7 @@ class RoomMemberModel extends Model{
 
 }
 
-
+export function initRoomMemberModel(sequelize: Sequelize){
 RoomMemberModel.init(
     {
         id: {
@@ -33,6 +33,7 @@ RoomMemberModel.init(
         timestamps: true
     },
 )
-
+    return RoomMemberModel;
+}
 
 export default RoomMemberModel;

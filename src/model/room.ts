@@ -1,5 +1,5 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "./index";
+import { DataTypes, Model, Sequelize } from "sequelize";
+import {sequelize} from "./index";
 
 
 
@@ -10,7 +10,7 @@ class RoomModel extends Model{
 
 }
 
-
+export function initRoomModel(sequelize: Sequelize){    
 RoomModel.init(
     {
         id: {
@@ -40,6 +40,7 @@ RoomModel.init(
         timestamps: true
     },
 )
-
+ return RoomModel
+}
 
 export default RoomModel;

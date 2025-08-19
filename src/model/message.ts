@@ -1,14 +1,18 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import { v4 as uuidv4 } from "uuid"
-import sequelize from "./index";
+import { sequelize } from "./index";
 
 class MessageModel extends Model{
    public id!: string | null;
    public roomId!: string;
    public senderId!: string;
    public content!: string;
+   public deliveredAt!: Date | null;
+   public readAt!: Date | null;
 
 }
+
+export function initMessageModel(sequelize: Sequelize) {    
 
 MessageModel.init(
     {
@@ -29,7 +33,14 @@ MessageModel.init(
         content: {
             type: DataTypes.STRING,
             allowNull: false,
-        }
+        },
+        deliveredAt: { 
+            type: DataTypes.DATE, 
+            allowNull: true },
+        readAt: { 
+            type: DataTypes.DATE, 
+            allowNull: true 
+        },
     },
     {
         sequelize,
@@ -38,6 +49,7 @@ MessageModel.init(
         timestamps: true
     },
 )
-
+  return MessageModel;
+}
 
 export default MessageModel;
