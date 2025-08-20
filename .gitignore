@@ -4,3 +4,6 @@ config
 *-lock.json
 *.lock
 node_modules
+.git
+Dockerfile
+docker-compose.yml

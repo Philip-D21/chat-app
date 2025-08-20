@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import { Request, Response, NextFunction } from 'express'
 import * as dotenv from 'dotenv'
+import { Server } from 'socket.io';
 dotenv.config();
 
 
@@ -21,6 +22,9 @@ import globalErrorHandler from './middleware/errorHandler'
 // Calling the database and sync
 import './model/index';
 import './model/sync';
+
+// Import Socket.IO handler
+import chatSocket from './socket/chatEvent'; 
 
 
 //middlewares 
@@ -56,9 +60,13 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // })
 
 app.use(globalErrorHandler);
-
 const port = process.env.PORT || 2025;
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port} 🚀`);
-})
+// ===== Start Express server =====
+const server = app.listen(port, () => {
+  console.log(`🚀 Server is running on http://localhost:${port}`);
+});
+
+// ===== Attach Socket.IO to Express server =====
+const io = new Server(server, { cors: { origin: '*' } });
+chatSocket(io);
