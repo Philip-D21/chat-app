@@ -19,11 +19,10 @@ const app = express();
 import globalErrorHandler from './middleware/errorHandler'
 // import AppError from './utils/appError'
 
-// Calling the database and sync
 import './model/index';
 import './model/sync';
 
-// Import Socket.IO handler
+
 import chatSocket from './socket/chatEvent'; 
 
 
@@ -32,7 +31,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('combined'));
-// Helmet helps secure Express apps by setting various HTTP headers
 app.use(helmet());
 
 // Enable CORS
@@ -62,11 +60,12 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 app.use(globalErrorHandler);
 const port = process.env.PORT || 2025;
 
-// ===== Start Express server =====
+
 const server = app.listen(port, () => {
   console.log(`🚀 Server is running on http://localhost:${port}`);
 });
 
-// ===== Attach Socket.IO to Express server =====
+
 const io = new Server(server, { cors: { origin: '*' } });
+console.log('Socket.IO ready 🚀');
 chatSocket(io);

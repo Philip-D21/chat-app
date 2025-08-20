@@ -204,12 +204,6 @@ The server reads these keys:
 
 If you use Docker Compose, ensure the variable names in the `app` service match the above (especially `DB_USERNAME`/`DB_PASSWORD`).
 
-## Troubleshooting
-
-- Cannot connect to DB: verify host, port, credentials; with Compose use `DB_HOST=db` inside the network.
-- MySQL auth errors: the Compose file enforces `mysql_native_password` for compatibility.
-- Tables missing: Sequelize sync runs on boot; check logs for `Table synced successfully`.
-- JWT errors on sockets: ensure you pass a valid token in `auth.token` or `Authorization` header.
 
 ## License
 
