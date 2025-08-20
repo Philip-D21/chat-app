@@ -149,34 +149,42 @@ Base URL: `http://localhost:2025/api/v1`
   - body: `{ email, password }`
   - response: `{ token, userId, firstname, username, email }`
 
-### Chat
+### Chat (JWT required)
 
 - POST `/chat/rooms` — Create a room
+  - headers: `Authorization: Bearer <token>`
   - body: `{ name, isPrivate }`
-  - response: `{ roomId, inviteLink }`
-- POST `/chat/rooms/:roomId/join` — Join a room by ID
-  - body: `{ userId }`
-- POST `/chat/invite/:inviteCode/join` — Join via invite
-  - body: `{ userId }`
-- GET `/chat/rooms/:roomId/messages` — Get messages
-- GET `/chat/rooms?userId=<id>` — List user rooms
-
-Note: HTTP routes are currently open; Socket events require JWT.
+  - response: `{ status, roomId, inviteLink }`
+- POST `/chat/rooms/:roomId/join` — Join a public room by ID
+  - headers: `Authorization: Bearer <token>`
+  - response: `{ status, message, newMember }`
+  - Note: Private rooms cannot be joined by ID; use invite link.
+- POST `/chat/invite/:inviteCode/join` — Join via invite (works for private rooms)
+  - headers: `Authorization: Bearer <token>`
+  - response: `{ status, message, room, newMember }`
+- GET `/chat/rooms/:roomId/messages?limit=50&offset=0` — Get messages (paginated, newest first)
+  - headers: `Authorization: Bearer <token>`
+- GET `/chat/rooms` — List user rooms
+  - headers: `Authorization: Bearer <token>`
 
 ## Socket.IO
 
 Connect with a JWT via `auth.token` or `Authorization: Bearer <token>` header.
 
-Events:
+Events (send `auth.token` with JWT when connecting):
 
 - `join_room` — `{ roomId }`
 - `send_message` — `{ roomId, content }`
 - `receive_message` — broadcasted message payload
 - `typing` — `{ roomId, isTyping }`
 - `user_status` — `{ userId, status, lastSeen? }`
+- `message_delivered` — `{ messageId, roomId }` (emitted by server after update)
+- `message_read` — `{ messageId, roomId, userId }` (emitted by server after update)
 - `error` — `{ message }`
 
-Rate limiting: 5 messages per 10 seconds per user/room.
+Additional:
+- Rate limiting: 5 messages per 10 seconds per user/room.
+- Presence: last seen is persisted on disconnect.
 
 ## Project Scripts
 

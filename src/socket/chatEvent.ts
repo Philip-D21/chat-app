@@ -5,17 +5,17 @@ import  MessageModel  from "../model/message";
 import  RoomMemberModel from "../model/roomMember";
 
 interface JwtPayload {
-  id: number;
+  id: string;
   username: string;
 }
 
 // Online tracking
-const onlineUsers = new Map<number, string>(); // userId -> socketId
-const lastSeen = new Map<number, Date>();
+const onlineUsers = new Map<string, string>(); // userId -> socketId
+const lastSeen = new Map<string, Date>();
 
 // Rate limit: 5 messages per 10 seconds per user/room
 const msgBuckets = new Map<string, { count: number; started: number }>();
-function checkBucket(userId: number, roomId: number, windowMs = 10_000, max = 5) {
+function checkBucket(userId: string, roomId: string, windowMs = 10_000, max = 5) {
   const key = `${userId}:${roomId}`;
   const now = Date.now();
   const bucket = msgBuckets.get(key);
@@ -34,7 +34,7 @@ function checkBucket(userId: number, roomId: number, windowMs = 10_000, max = 5)
 }
 
 // Check membershs in db
-async function isMember(userId: number, roomId: number): Promise<boolean> {
+async function isMember(userId: string, roomId: string): Promise<boolean> {
   const member = await RoomMemberModel.findOne({ where: { userId, roomId } });
   return !!member;
 }
@@ -64,7 +64,7 @@ export default function chatSocket(io: Server) {
     io.emit("user_status", { userId: user.id, status: "online" });
 
     // join a room
-    socket.on("join_room", async ({ roomId }: { roomId: number }) => {
+    socket.on("join_room", async ({ roomId }: { roomId: string }) => {
       if (!(await isMember(user.id, roomId))) {
         return socket.emit("error", { message: "Not a member of this room" });
       }
@@ -74,7 +74,7 @@ export default function chatSocket(io: Server) {
     });
 
     // send a message
-    socket.on("send_message", async ({ roomId, content }: { roomId: number; content: string }) => {
+    socket.on("send_message", async ({ roomId, content }: { roomId: string; content: string }) => {
       if (!(await isMember(user.id, roomId))) {
         return socket.emit("error", { message: "Not a member of this room" });
       }
@@ -99,15 +99,40 @@ export default function chatSocket(io: Server) {
     });
 
     // typing indicator
-    socket.on("typing", ({ roomId, isTyping }: { roomId: number; isTyping: boolean }) => {
+    socket.on("typing", ({ roomId, isTyping }: { roomId: string; isTyping: boolean }) => {
       socket.to(`room_${roomId}`).emit("typing", { userId: user.id, isTyping });
     });
 
     // disconnect
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       onlineUsers.delete(user.id);
-      lastSeen.set(user.id, new Date());
+      const seen = new Date();
+      lastSeen.set(user.id, seen);
+      // persist last seen in DB
+      try {
+        const { default: UserModel } = await import("../model/user");
+        await UserModel.update({ lastSeen: seen }, { where: { id: user.id } });
+      } catch (e) {
+        // ignore persistence errors for presence
+      }
       io.emit("user_status", { userId: user.id, status: "offline", lastSeen: lastSeen.get(user.id) });
+    });
+
+    // delivery receipts
+    socket.on("message_delivered", async ({ messageId, roomId }: { messageId: string; roomId: string }) => {
+      if (!(await isMember(user.id, roomId))) return;
+      try {
+        await MessageModel.update({ deliveredAt: new Date() }, { where: { id: messageId, roomId } });
+        io.to(`room_${roomId}`).emit("message_delivered", { messageId, roomId });
+      } catch {}
+    });
+
+    socket.on("message_read", async ({ messageId, roomId }: { messageId: string; roomId: string }) => {
+      if (!(await isMember(user.id, roomId))) return;
+      try {
+        await MessageModel.update({ readAt: new Date() }, { where: { id: messageId, roomId } });
+        io.to(`room_${roomId}`).emit("message_read", { messageId, roomId, userId: user.id });
+      } catch {}
     });
   });
 }

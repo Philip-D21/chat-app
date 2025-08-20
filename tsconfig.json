@@ -37,6 +37,6 @@
     
   },
   // include both source files and local declaration files
-  "include": ["src/**/*.ts", "@types/**/*.d.ts"], 
+  "include": ["src/**/*.ts", "@types/**/*.d.ts"],
 	"exclude": ["node_modules"]
 }

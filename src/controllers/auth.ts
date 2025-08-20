@@ -82,7 +82,8 @@ export const login = async (req: Request, res: Response) => {
 				username: user.username,
 				email: user.email,
 			},
-			process.env.JWT_SECRET as string
+			process.env.JWT_SECRET as string,
+			{ expiresIn: '1d' }
 		)
 		return res.status(200).json({
 			status: 'success',
