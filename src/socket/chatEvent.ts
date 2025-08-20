@@ -41,6 +41,7 @@ async function isMember(userId: number, roomId: number): Promise<boolean> {
 
 export default function chatSocket(io: Server) {
   io.on("connection", async (socket: Socket) => {
+    console.log("Connected to socket.io")
     // ✅ authenticate user with the verifyToken func
     const token =
       (socket.handshake.auth && socket.handshake.auth.token) ||
