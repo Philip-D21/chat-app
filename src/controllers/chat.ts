@@ -132,8 +132,10 @@ export const getRoomMessages = async (req: Request, res: Response) => {
 };
 
 export const getUserRooms = async (req: Request, res: Response) => {
+ 
   try {
     const authUser = (req as any).user as { id: string };
+
     if (!authUser?.id) {
       return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }

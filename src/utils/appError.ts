@@ -13,7 +13,4 @@ class AppError extends Error {
   }
 }
 
-
-new AppError("Not found", 404);
-
 export default AppError;

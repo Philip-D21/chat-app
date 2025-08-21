@@ -5,7 +5,7 @@ import {sequelize} from './index'
 sequelize
 	.sync({
 		force: false,
-		//alter: true,
+		alter: true,
 	})
 	.then(() => {
 		console.log('Table synced successfully')

@@ -12,6 +12,7 @@ dotenv.config();
 //import routes
 import authRouter from './routes/auth';
 import chatRouter from './routes/chat';
+import { authenticate } from './middleware/verifyJWT';
 
 const app = express();
 
@@ -43,7 +44,7 @@ app.use(
 
 //definiing routes
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/chat', chatRouter);
+app.use('/api/v1/chat',  chatRouter);
 
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
@@ -58,6 +59,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // })
 
 app.use(globalErrorHandler);
+
 const port = process.env.PORT || 2025;
 
 
